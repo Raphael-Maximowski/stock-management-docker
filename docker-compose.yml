@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: stock_management_development
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  back-end:
+    build: 
+      context: ./stock-management-rails
+      target: development
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: stock_management_development
+      RAILS_ENV: development
+      DATABASE_URL: postgresql://root:root@postgres:5432/stock_management_development
+      CORS_ORIGINS: "http://localhost:8080"
+    volumes:
+      - ./stock-management-rails:/rails
+      - bundle_data:/usr/local/bundle
+    stdin_open: true
+    tty: true
+
+  front-end:
+    build: ./stock-management-vue
+    ports:
+      - "8080:8080"
+    depends_on:
+      - back-end
+    volumes:
+      - ./stock-management-vue:/app
+      - /app/node_modules
+    environment:
+      VITE_API_URL: http://localhost:3000/api
+
+volumes:
+  postgres_data:
+  bundle_data:

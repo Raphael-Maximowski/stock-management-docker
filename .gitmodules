@@ -1,0 +1,6 @@
+[submodule "stock-management-rails"]
+	path = stock-management-rails
+	url = https://github.com/Raphael-Maximowski/stock-management-rails.git
+[submodule "stock-management-vue"]
+	path = stock-management-vue
+	url = https://github.com/Raphael-Maximowski/stock-management-vue.git
